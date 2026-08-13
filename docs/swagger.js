@@ -17,7 +17,7 @@ module.exports = {
   },
   servers: [
     { url: 'http://localhost:5000', description: 'Local development' },
-    { url: 'https://REPLACE-WITH-YOUR-VERCEL-APP.vercel.app', description: 'Production' },
+    { url: 'https://eyouth-30909040102232-event-pulse.vercel.app', description: 'Production' },
   ],
   components: {
     securitySchemes: {

@@ -20,20 +20,28 @@ app.get('/', (req, res) => {
   res.json({ message: 'EventPulse API is running' });
 });
 
-// HEALTH ENDPOINT — server + database state
+// HEALTH ENDPOINT — waits for the DB on serverless
 const DB_STATES = ['disconnected', 'connected', 'connecting', 'disconnecting'];
 
-app.get('/health', (req, res) => {
-  const database = DB_STATES[mongoose.connection.readyState];
-  const ok = mongoose.connection.readyState === 1;
-
-  res.status(ok ? 200 : 503).json({
-    success: ok,
-    message: ok ? 'Service available' : 'Database not connected',
-    server: 'up',
-    database,
-    time: new Date().toISOString(),
-  });
+app.get('/health', async (req, res) => {
+  try {
+    await mongoose.connection.asPromise(); // Wait for the handshake to finish
+    return res.json({
+      success: true,
+      message: 'Service available',
+      server: 'up',
+      database: 'connected',
+      time: new Date().toISOString(),
+    });
+  } catch (err) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database not connected',
+      server: 'up',
+      database: DB_STATES[mongoose.connection.readyState],
+      time: new Date().toISOString(),
+    });
+  }
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

@@ -1,7 +1,14 @@
-// api/index.js — Vercel serverless entry point
+// api/index.js — Vercel serverless entry point (no process.exit!)
+const mongoose = require('mongoose');
 const app = require('../app');
-const connectDB = require('../config/db');
 
-connectDB(); // cloud must connect on startup (server.js doesn't run on Vercel)
+// Vercel doesn't run server.js, so we connect here without crashing if it fails
+if (process.env.MONGODB_URI) {
+  mongoose.connect(process.env.MONGODB_URI).catch((err) => {
+    console.error('MongoDB connection error:', err.message);
+  });
+} else {
+  console.error('MONGODB_URI is not set on the platform!');
+}
 
 module.exports = app;
