@@ -1,4 +1,6 @@
 // app.js
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swagger');
 const express = require('express');
 const mongoose = require('mongoose');
 const errorHandler = require('./middleware/errorHandler');
@@ -34,6 +36,7 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);

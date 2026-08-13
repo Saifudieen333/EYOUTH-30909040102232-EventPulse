@@ -1,0 +1,134 @@
+{
+  "info": {
+    "name": "EventPulse API — Production Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        { "name": "Health check", "request": { "method": "GET", "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/health", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["health"] } } }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register attendee",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"name\": \"New Attendee\", \"email\": \"new@test.com\", \"password\": \"secret123\" }" },
+            "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/auth/register", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Login admin (sets adminToken)",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.environment.set('adminToken', pm.response.json().token);"] } } ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"email\": \"admin@eventpulse.com\", \"password\": \"Admin@1234\" }" },
+            "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/auth/login", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login attendee (sets attendeeToken)",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.environment.set('attendeeToken', pm.response.json().token);"] } } ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"email\": \"omar@test.com\", \"password\": \"secret123\" }" },
+            "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/auth/login", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users (admin)",
+      "item": [
+        { "name": "List users", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/users", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "users"] } } },
+        {
+          "name": "Create user (sets userId)",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.json().data) pm.environment.set('userId', pm.response.json().data._id);"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"name\": \"Org User\", \"email\": \"org@test.com\", \"password\": \"secret123\", \"role\": \"organizer\" }" },
+            "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/users", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "users"] }
+          }
+        },
+        { "name": "Show one user", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/users/{{userId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "users", "{{userId}}"] } } },
+        { "name": "Update user (PATCH)", "request": { "method": "PATCH", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{ \"name\": \"Org User Updated\" }" }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/users/{{userId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "users", "{{userId}}"] } } },
+        { "name": "Delete user", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/users/{{userId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "users", "{{userId}}"] } } }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        { "name": "List categories", "request": { "method": "GET", "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/categories", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "categories"] } } },
+        {
+          "name": "Create category (sets categoryId)",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.json().data) pm.environment.set('categoryId', pm.response.json().data._id);"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"name\": \"Art\", \"description\": \"Artistic events\" }" },
+            "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/categories", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "categories"] }
+          }
+        },
+        { "name": "Show one category", "request": { "method": "GET", "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/categories/{{categoryId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "categories", "{{categoryId}}"] } } },
+        { "name": "Update category (PATCH)", "request": { "method": "PATCH", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{ \"description\": \"Art and culture\" }" }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/categories/{{categoryId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "categories", "{{categoryId}}"] } } }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        { "name": "List events (all)", "request": { "method": "GET", "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/events", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "events"] } } },
+        { "name": "List events (filter+sort+page)", "request": { "method": "GET", "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/events?city=cairo&sort=popular&page=1&limit=2", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "events"], "query": [{ "key": "city", "value": "cairo" }, { "key": "sort", "value": "popular" }, { "key": "page", "value": "1" }, { "key": "limit", "value": "2" }] } } },
+        {
+          "name": "Create event (sets eventId)",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.json().data) pm.environment.set('eventId', pm.response.json().data._id);"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"title\": \"Postman Demo Night\", \"description\": \"Created from the delivery collection\", \"date\": \"2026-12-15T20:00:00.000Z\", \"capacity\": 100, \"city\": \"Cairo\", \"category\": \"{{categoryId}}\" }" },
+            "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/events", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "events"] }
+          }
+        },
+        { "name": "Show one event", "request": { "method": "GET", "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/events/{{eventId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "events", "{{eventId}}"] } } },
+        { "name": "Update event (PATCH)", "request": { "method": "PATCH", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{ \"capacity\": 250 }" }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/events/{{eventId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "events", "{{eventId}}"] } } },
+        { "name": "Announcement history", "request": { "method": "GET", "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/events/{{eventId}}/announcements", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "events", "{{eventId}}", "announcements"] } } }
+      ]
+    },
+    {
+      "name": "Registrations",
+      "item": [
+        {
+          "name": "Register me for event (sets registrationId)",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.json().data) pm.environment.set('registrationId', pm.response.json().data._id);"] } } ],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{attendeeToken}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"event\": \"{{eventId}}\" }" },
+            "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/registrations", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "registrations"] }
+          }
+        },
+        { "name": "My registrations", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{attendeeToken}}", "type": "string" }] }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/registrations/me", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "registrations", "me"] } } },
+        { "name": "All registrations (admin)", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/registrations", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "registrations"] } } },
+        { "name": "Cancel my registration", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{attendeeToken}}", "type": "string" }] }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/registrations/{{registrationId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "registrations", "{{registrationId}}"] } } }
+      ]
+    },
+    {
+      "name": "Cleanup (run last)",
+      "item": [
+        { "name": "Delete event (admin)", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/events/{{eventId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "events", "{{eventId}}"] } } },
+        { "name": "Delete category (admin)", "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": { "raw": "https://eyouth-30909040102232-event-pulse.vercel.app/api/categories/{{categoryId}}", "protocol": "https", "host": ["eyouth-30909040102232-event-pulse", "vercel", "app"], "path": ["api", "categories", "{{categoryId}}"] } } }
+      ]
+    }
+  ]
+}
