@@ -1,5 +1,4 @@
 // app.js
-const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -44,7 +43,29 @@ app.get('/health', async (req, res) => {
   }
 });
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// API DOCS — Swagger UI via CDN (serverless-proof)
+app.get('/api-docs.json', (req, res) => res.json(swaggerSpec));
+
+app.get('/api-docs', (req, res) => {
+  res.set('Content-Type', 'text/html').send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EventPulse API Docs</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui.css" />
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+  <script>
+    window.onload = () => {
+      SwaggerUIBundle({ url: '/api-docs.json', dom_id: '#swagger-ui', deepLinking: true });
+    };
+  </script>
+</body>
+</html>`);
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
